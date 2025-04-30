@@ -1,0 +1,24 @@
+name: fair_app
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python > 3.7
+#  - pip 
+  - pandas
+  - matplotlib
+  - plotly
+#  - scipy
+  - seaborn
+  - spyder-kernels=3.0
+  - shiny
+  - shinywidgets
+  - anywidget
+  - faicons
+# just for reformatting fair outputs:
+  - xarray
+  - netcdf4
+  - dask
+  - numpy
