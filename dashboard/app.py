@@ -9,8 +9,8 @@ from faicons import icon_svg
 
 # Import data from shared.py
 from shared import app_dir, df, dfmed
-from shiny import reactive
-from shiny.express import input, render, ui
+from shiny import reactive, render, App
+from shiny.express import input, ui #render
 from shinywidgets import render_widget#, output_widget  
 #from shinywidgets import render_plotly
 #import plotly.express as px
@@ -39,37 +39,6 @@ NGFS_colors = {
 
 
 pio.templates.default = "plotly_white"
-
-
-#def plot_scenarios(ds):
-#    fig, ax = plt.subplots()
-#
-#    for scenario in ds.scenario.unique():
-#        for pp in ((0, 1.00), (.05, .95), (.16, .84)):
-#            ax.fill_between(
-#                ds.year.unique(),
-#                ds[ds['scenario']==scenario].groupby('year')[['warming','year']].quantile(pp[0])['warming'],
-#                ds[ds['scenario']==scenario].groupby('year')[['warming','year']].quantile(pp[1])['warming'],
-#                color=NGFS_colors[scenario],
-#                alpha=0.2,
-#                lw=0,
-#                zorder=1
-#            )
-
-#        ax.plot(
-#            ds.year.unique(),
-#            ds[ds['scenario']==scenario].groupby('year')['warming'].median(),
-#            color=NGFS_colors[scenario],
-#            zorder=2
-#        )
-#        ax.set_xlim(1850, 2100)
-#        ax.set_ylim(-1, 6)
-#        ax.set_ylabel('warming (°C)')
-#        ax.axhline(0, color="k", ls=":", lw=0.5)
-#        ax.axhline(1.5, color="k", ls=":", lw=0.5)
-#        ax.axhline(2.0, color="k", ls=":", lw=0.5)
-#        ax.axvline(year_number(), color="k", ls=":", lw=1, zorder=0)
-#        ax.annotate(str(year_number()), (year_number()-10,5), rotation=90)
 
 
 
@@ -237,10 +206,17 @@ with ui.sidebar(title="Options",width=400):
         #ax1.layout(extent=[0.1, 0.1, 0.9, 0.9])
         return ax1
         
+    
     ui.input_slider("year", "Year", 2000, 2100, 2030)
+    
+    ui.tags.div(
+        ui.tags.span("NGFS Scenarios", class_="me-2 fw-bold"),
+        ui.input_action_button("info_btn", "", icon=icon_svg("circle-info")),
+        class_="d-flex align-items-center mb-2"
+    )
     ui.input_checkbox_group(
         "scenario",
-        "Scenario",
+        "",#"NGFS Scenarios",
         {
             "Low Demand": ui.span("Low Demand", style="color: " + NGFS_colors["Low Demand"] + "; font-weight: bold;"),
             "Net Zero 2050": ui.span("Net Zero 2050", style="color: "+ NGFS_colors["Net Zero 2050"] + "; font-weight: bold;"),
@@ -252,15 +228,16 @@ with ui.sidebar(title="Options",width=400):
         },
         selected=["Current Policies"] 
     )
+    ui.input_action_button("go","Calculate")
 
 
-    
     
 with ui.layout_column_wrap(fill=False):
     with ui.value_box(class_="custom-value-box", showcase=icon_svg("temperature-half", fill="grey")):#fill="color: #545659;")):
         "Median Warming"# + str(input.year())
         
         @render.ui
+        @reactive.event(input.go, ignore_none=False)
         def median_warming_C():
             return ui.HTML(med_warming_text())
 
@@ -268,6 +245,7 @@ with ui.layout_column_wrap(fill=False):
         "Probability of Exceeding 1.5°C"
 
         @render.ui
+        @reactive.event(input.go, ignore_none=False)
         def probability_15():
             return ui.HTML(exceedance_probability_text(1.5))
 
@@ -275,6 +253,7 @@ with ui.layout_column_wrap(fill=False):
         "Probability of Exceeding 2.0°C"
 
         @render.ui
+        @reactive.event(input.go, ignore_none=False)
         def probability_2():
             return ui.HTML(exceedance_probability_text(2))
 
@@ -284,6 +263,7 @@ with ui.layout_columns():
         ui.card_header("Warming Timeseries")
         
         @render_widget(width=600,height=600)
+        @reactive.event(input.go, ignore_none=False)
         def timeseries():
             return plot_scenarios_plotly(filtered_df())
 
@@ -291,6 +271,7 @@ with ui.layout_columns():
         ui.card_header("Warming Possibilities" )
 
         @render_widget(width=600,height=600) # this also does not keep the plot from changing size when scenarios are added
+        @reactive.event(input.go, ignore_none=False)
         def year_warming_dist():
             return plot_year_warming_probabilities_plotly()
 
@@ -365,3 +346,29 @@ def data_for_dist_plot():
 #                   '2013': np.random.randn(200)+1})
     return newdf
 
+
+def server(input):
+    @reactive.effect
+    @reactive.event(input.info_btn)
+    def _():
+        ui.modal_show(
+            ui.modal(
+                "NGFS Scenario Info",
+                ui.tags.p("The NGFS (Network for Greening the Financial System) scenarios explore a range of climate policy and socioeconomic pathways."),
+                ui.output_plot("info_plot"),
+                easy_close=True,
+                footer=ui.modal_button("Close")
+            )
+        )
+
+    @render.plot
+    def info_plot():
+        plt.figure()
+        ax = sns.lineplot(data=dfmed, x="year", y="warming", hue="scenario", palette=NGFS_colors)
+        ax.set_title("Median Warming by Scenario")
+        ax.set_ylabel("Warming (°C)")
+        ax.set_xlabel("Year")
+        return ax
+
+# Attach the UI and server
+app = App(ui=ui, server=server)
