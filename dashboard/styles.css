@@ -2,6 +2,10 @@
   --bslib-sidebar-main-bg: #f8f8f8;
 }
 
+.info-btn {
+    border: none;
+}
+
 /* p {
   font-size: 100%;
   } */
