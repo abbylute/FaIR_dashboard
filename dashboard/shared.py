@@ -15,4 +15,5 @@ app_dir = Path(__file__).parent
 
 data_dir =  "/Users/abbylute/Documents/FaIR/FaIR_dashboard_data/"
 df = pd.read_csv(data_dir + "fair_warming.csv")
-dfmed = pd.read_csv(data_dir + "fair_warming_scenario_medians.csv")
+dfmed = pd.read_csv(data_dir + "fair_warming_scenario_medians_exceedances.csv")
+dfquant = pd.read_csv(data_dir + "fair_warming_scenario_quantiles.csv")
