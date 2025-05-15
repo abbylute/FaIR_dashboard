@@ -15,8 +15,8 @@ import pandas as pd
 import numpy as np
 
 
-simname = 'NGFS'
-#simname= 'CMIP7'
+#simname = 'NGFS'
+simname= 'CMIP7'
 
 if simname=='NGFS':
     rawdir = '/Users/abbylute/Documents/FaIR/outputs/AL_V5/'
@@ -93,5 +93,26 @@ df.to_csv(outdir + 'fair_warming.csv', index=False)
 df_median = df.groupby(['scenario','year']).warming.median().reset_index()
 df_median = df_median[df_median['year']>=2000]
 
-df_median = df_median.sort_values('scenario')
-df_median.to_csv(outdir + 'fair_warming_scenario_medians.csv', index=False)
+df_median = df_median.sort_values('scenario').rename(columns={'warming':'median_warming'})
+#df_median.to_csv(outdir + 'fair_warming_scenario_medians.csv', index=False)
+
+
+
+
+# calculate probability of exceeding 1.5 and 2C for each year and scenario
+def myfunc(df,level):
+    prob = round((df["warming"] > level).mean() * 100, 1)
+    return prob
+    
+prob15 = df.groupby(['year','scenario'])[['year','scenario','warming']].apply(myfunc,1.5).reset_index().rename(columns={0:'prob1.5'})
+prob2 = df.groupby(['year','scenario'])[['year','scenario','warming']].apply(myfunc,2).reset_index().rename(columns={0:'prob2.0'})
+prob_exceed = pd.merge(prob15,prob2)
+prob_exceed = prob_exceed[prob_exceed['year']>=2000]
+prob_exceed = pd.merge(df_median, prob_exceed)
+prob_exceed.to_csv(outdir + 'fair_warming_scenario_medians_exceedances.csv', index=False)
+
+
+# precalculate the confidence intervals for the time series plot
+cilist = [0, 1.00, 0.05, 0.95, 0.16, 0.84, 0.50]
+df_quantiles = df.groupby(['year','scenario'])[['warming']].quantile(cilist).reset_index().rename(columns={'level_2':'CI_level'})
+df_quantiles.to_csv(outdir + 'fair_warming_scenario_quantiles.csv', index=False)
