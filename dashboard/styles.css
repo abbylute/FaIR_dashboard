@@ -1,9 +1,26 @@
-:root {
-  --bslib-sidebar-main-bg: #f8f8f8;
-}
+
 
 .info-btn {
-    border: none;
+    --bs-btn-padding-x: 0em;
+    --bs-btn-padding-y: 0em;
+    background-color: #404040;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    font-family: math;
+    border-radius: 50%; 
+    width: 17px; 
+    height: 17px;
+   /* border: none;*/
+}
+
+#toggle_temp {
+    --bs-btn-padding-x: 0em;
+    --bs-btn-padding-y: 0em;
+    font-weight: bold;
+    border-radius: 50%; 
+    width: 30px; 
+    height: 30px;
 }
 
 /* p {
