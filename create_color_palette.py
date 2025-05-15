@@ -71,3 +71,51 @@ dfmed = pd.read_csv(data_dir + "fair_warming_scenario_medians.csv")
 dfmed[dfmed['year']==2100].sort_values('warming')
 
 
+### TRY OUT TAB20 INSTEAD
+cmap = matplotlib.colormaps['tab20']
+cols = get_hex_colors_from_cmap(matplotlib.colormaps['tab20'],20)
+
+display_palette(cmap,20)
+
+reordered_cmap_list = [cols[6],cols[7],cols[12],cols[13],cols[2],cols[3],
+                       cols[16],cols[17],cols[4],cols[5],cols[0],cols[1],
+                       cols[18],cols[19],cols[14],cols[15],cols[10],cols[11],
+                       cols[8],cols[9]]
+
+# ok reordering of 20 item color list:
+reordered_cmap_list = [cols[6],cols[7],cols[12],cols[13],cols[2],cols[3],
+                       cols[16],cols[17],cols[4],cols[5],
+                       cols[14],cols[15],
+                       cols[18],cols[19],
+                       cols[0],cols[1],
+                       cols[8],cols[9], 
+                       cols[10],cols[11],
+                       ]
+new_cmap = LinearSegmentedColormap.from_list('new_cmap', reordered_cmap_list)
+display_palette(new_cmap,len(reordered_cmap_list))
+
+# new list for 14 colors:
+reordered_cmap_list = [cols[6],cols[7],cols[2],cols[3],
+                       cols[16],cols[17],cols[4],cols[5],
+                       #cols[14],cols[15],# greys
+                       cols[18],cols[19],
+                       cols[0],cols[1],
+                       cols[8],cols[9], 
+                       ]
+new_cmap = LinearSegmentedColormap.from_list('new_cmap', reordered_cmap_list)
+display_palette(new_cmap,len(reordered_cmap_list))
+
+import seaborn as sns
+# Seaborn palettes don't work because they loop colors instead of adding new ones
+cmap = sns.color_palette("colorblind",14)
+hex_colors = [matplotlib.colors.rgb2hex(rgba) for rgba in cmap]
+new_cmap = LinearSegmentedColormap.from_list('new_cmap', hex_colors)
+display_palette(new_cmap,len(hex_colors))
+
+
+import distinctipy
+cmap = distinctipy.get_colors(14)
+hex_colors = [matplotlib.colors.rgb2hex(rgba) for rgba in cmap]
+new_cmap = LinearSegmentedColormap.from_list('new_cmap', hex_colors)
+display_palette(new_cmap,len(hex_colors))
+
