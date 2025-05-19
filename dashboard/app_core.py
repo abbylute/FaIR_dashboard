@@ -19,16 +19,45 @@ from faicons import icon_svg
 
 from shared import app_dir, df, dfmed, dfquant
 
+thermometer_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB+ElEQVR4nO2YSytFURTHt2cpZI6hEZIvYKKEwkDKVMbKe+gxkPIthAEy4hPwFbwlZS66qUseP+0suV3Xufues8+xz3F+w9N6/Ndae+27u0qlfAM0AbtAhp/ob3tAi3JY/B3F0TaNyjX47Lxmv5BA/Q04EJtt5Rp8H5tfuws0i82Dcg0EW3aRkxbw1yR2AsBRobtUuQZJLSCftICwSOwEiPsOEPcC8kkLCIvEToC47wBxLyCftICwSOwEiPsOULiAQ+UauNpZU/5NAUAf0K9cApgT/VnDP8DegSWgLBqF3oIWRPwLMGZgPy62mrVoVP4upgt4A56AnhL8eoBnmYSxn1WACuBKOjntw39WfG+B6nBUFl9GzQlQ7sO/HDiTGKPhqPQWsCXJpwLEmJEYO3bVmSW/keQdAWJ0Soxru+rMkusl1DQEiNFgev1aB3iU5LUBYtRJjIxddWbJLyR5a4AYbRLjzK46s+SbknwmQIwpibFhV51Z8mFJridR5fN35FhiDIej0ltAZc49Pu/Df0J8L/00wAr6VSnPgVdgsAS/7pynxEC4KouLWZZO6iLmvbopx2Yi5wpeiVZtYVFlwKJ0U3Muv7DtQA1QL7fNJHAqNtp21Ynn9BdAb85OeHFRynGLFH18gCF9LcojLwvcy6KuAyN6+aNVpdzmAw3UhPaDC6NyAAAAAElFTkSuQmCC" alt="temperature">')
+fire_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFBElEQVR4nNWaaahVVRTHj6Zi+bTIrCjTSs0GTZQGqAwLo3oNRuaXhGi2voRhCEEZRSk0ERVEIWqQaRM5vKaXEY32jAxLs4nmLM0Gqle+8vWL1f0f3N3uPXude86z99ane8/9r/9a65yz115r7ZskJQuwC7AWeAkYkfRUAQ5lh/wMTE96ogDnKIgfg4AWAAOSniTAHDl/JTAD+F3fNwLjkp4iwKty/Eh9Hw98pGsW1MVJdxdgMLAd+BroHVzfHXgseNXmAr2S7irALDl6V53frwL+FGYp0D/pbkIl7X4sJydk4JqBX4R7Ddgr6U4CXCjnVjmwRwHfCm/BH5x0BwF2Bb6UYyc5dUYAH0rnM2BY13sad+p2ObQip94QYE3wZPbvOi/jzhynTNUOjGpAf0/gnWCv2adrPI078amcuKIAz77Ba/aupfFyPc023htYKePLSuAbDnwhvlbLguV4Gjc8T0Y3lZVCgdHA9+KdVwZnzOAFMtYBnBjB9gduAU5wcp8OdAJ/AeeW5nQNQ8cD2xTIJQ78ycJu8zoG3BS0AYeV4niVgQOBzTJyp1PniKDGsux2qXP9tUpndVi3FRZgYJAmn/YuRqCJf4u9Mpc595jN0plRVhB2h5aLdINVszn1t0rX2l+TP4BTcpQ9PwB7FwqiKkNtbaQPB96SvvUmq4IO8vCIXq+gv3mwaBDNeh3sLk5qkOMpOTNRr9q64On2i+iOU+lvPowtsuNukdFZDZFUeFrEMUXfRwY9/bUO/YXCLmnUgSXB4m64owueyNnBtWm6ZjXaQY6ngp5MvsLSFuM/qpUm6IBGgxCX3QiTM6quP6frDzs4XhR2Tl7jb0rxmgZ8r+ZKF+ykGjOw7brTmf1IMGbakHeBm3wV66ttXqWgnwX61sGk+8GwjKeVuVbUvKWjpUO8gayQwkwH9h52yH8KPTOq37bUWmfAVP2+xmHreWEv9450OpRuBzt677TAa6+1awM3yvjiOhxNerXM3m4Re7PFtdATyHSBWxzY9LVYBJwmZyyYO3RDjg4mJhMzeKyZMqk7fRFusnCrPYHcLfDsCG6UcOb8UF07X0+zWhY495kznQXoJk8gr9fKMBkz3qVV1ycAT2qBf2CLOFZgAo+Ia6qjtTZp9wSS9uDDI7i0zJ4WJY3bXCausyK4fsJ1eEh/EnhQBPe5cIUPc3QwZDLeUTKZfOMhTWezfSK4tLcuuuun+4NtjAMj2DGyud5DnBZzmT1HML4Z04D/Ic+p4mlzYNPdvdVDvNHjoKbphapi8Twknusd2FuFvdlD/LjAmWd/wHnBqDNzI8vgGKrXqtMz+6UyvY+m6RQ8U+BFjmOEdG57f84YUo4HvH0GlcFHp6Yxe3jIR2p3tuzV5NigfkuDyXNwo5lxp5LLaAf+Btl51GvDlF6Q0tUO7OQgmLWxbBforZfOXAd2gCaaJs2NNFU2bBjiwI8F3tY5R2YPHujYvKrN8xSB6+TPutwzrqD+WZljhlXeIE1ibbAmjvmeRkCwH/CdCOb/H6ewQF/gDfnwTBGiY4O7cV+9DrArhMpMa35akhQ+ALIzwaDFbNsZB5dUgrhXNju855Ie4mOAT0T8K3BbVx2RUWnIWoJeZ0rZBuzfC4u1x6CU+wRwkfaTQQX5+1ibrH9NoH0ss6wvJGqclgcBhfJKAd60SjCxzzvn7N1qI/0DyNLze0oKLxfgs33lfbXLudP43zjrlXuJCC9sAAAAAElFTkSuQmCC" alt="fire-element--v1">')
+house_fire_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAADs0lEQVR4nO2aW8hOWRjHt3E+zESNQ84zIlGUQw43SHGDcmiM1EeiZFLU1JALbnDhkLhgrpS4kFOZGSlR3GkozPA5xWgS4+xzmoSfnvHfLGv23u9+D3u/r3z/Wn3vfvaznrV+e532WvsLggzFO90GDgDDg09RQGs+1htgVfCpCeghgLPAYQdoZVALAnqm9Jukim/S9VzglVpmUuYVLSRV7i9gHdArwW+LfL9zbD/KdgNoE1RLQFuv3zcAdRF+XwL3gWeWx7F/AfyuvEu8PMOBn4AWeYD0ViUuACf1+zUw0/Oz1jJtjogxXvfqPXtn2f8EBmQNMkOFrdfTXaPrB0BH+UzTOHgIdImI0QS4qHz9HXsL5TPdA4ZkCbJTBU1xbIdkWwpMBp7oenZCnNXy+cGxLZfNJgT0IAZmAdEHeAk8dgeqWsB0S93MtLpArIny+xlobuuLWuO1HsZ+pwu3qjRI+OQ3ePb2zuC3p7kiRaxezux3zcm7yFlMT8u+vJIQsxTUZqKvI+6Hg3RkibNfPTAuYhYLx1/LSkB0AP5R0LkxPnVAsyLjmq4CC+PyAkflN73U+gcRg/B42cE+jjvGZrACPotV9pZKFBiuF1PLDlZ82WNV9rFSA9S0gs8WJKgx0QhSY6KxRXIU8FXSi6Z8qjfYgU6WUvruBbbH7R6rBiKIP5QKwgATVPS5qG10VUAciFAFYXi3WbvpbAuGVhXEgwhbJC3MLgf+DtCvKiAREP+NkTgY/80ZWOIt5PaG3C5XkAIVjryn6/PAKF1PdfYoNlZMW3MDSYJI8OnuPPkX2gKHb7zXbc+uIyXbBg/OHCQNRIyvdRtXd4H5+n1Z/nZiY9pdMkgJSjvN+jPaIefg7pH+npBvV+Bft5CsQVJBOGV0BK4o7zIdej904r0/3AMOlgQSBVVS5uS4zbVWmAZFzFhjHd/Qvr2cArMCCWencx7cZeCSu58HRsj3VC2C7PFPG511pS7mHOx2UCmQpEFSZFw7nDN969mbWvJsbeT7ohZBbN0gzeEbHz7jPa84SJKPbN3VfRqU9gF9nftPla1tijp8I9+/cwURhB2v+jJbN/mc8WenOAHfy/e3IGeQcCD/YhVX+lW23d6nhX0p6nBEvovzBrGuRPj0va+8j5wVO+xeCxPKX+AcZnfIG+R/PjF+c/RCaGkHMFon9ZaGAducby6RB+hlg0SpWBDZ5jktE6uyIPIAcbrdWv1zQYPA7HvLxsxAyslTyVhFqxGExhbJtmtVW8HnAvIWDK0FVYK0rvkAAAAASUVORK5CYII=" alt="burning-house">')
+
 # pretty palette, but hard to distinguish some colors
-hex_colors = ['#001219', '#004757', '#047380', '#159899', '#74c3b4', '#bbd5b2',
-              '#eacf8c', '#eda41a', '#db7f01', '#c75e02', '#bc4103', '#b32c0c',
-              '#9c1e15', '#751a1d']
+#hex_colors = ['#001219', '#004757', '#047380', '#159899', '#74c3b4', '#bbd5b2',
+#              '#eacf8c', '#eda41a', '#db7f01', '#c75e02', '#bc4103', '#b32c0c',
+#              '#9c1e15', '#751a1d']
 # tab20 based palette:
 #hex_colors = ['#d62728','#ff9896','#ff7f0e','#ffbb78','#bcbd22','#dbdb8d',
 # '#2ca02c','#98df8a','#17becf','#9edae5','#1f77b4','#aec7e8','#9467bd','#c5b0d5']
 # distinctipy: light/bright colors are hard to see on white background
 #hex_colors = ['#00ff00','#ff00ff','#0080ff','#ff8000','#80bf80','#5e07a3',
 # '#e3033e','#ed7edd','#027a3e','#00ffff','#ffff00','#00ff80','#8b5545','#0000ff']
+# adapted from sashamaps: https://sashamaps.net/docs/resources/20-colors/
+hex_colors = [
+              '#f032e6', #magenta
+              '#9A6324', #brown
+              '#911eb4', #purple
+              ##'#fabed4', #pink
+              ##'#dcbeff', #lavender
+              #'#fffac8', #beige
+              ##'#aaffc3', # mint
+              #'#808000', # olive
+              #'#ffd8b1', # apricot
+              ##'#000075', #navy too dark
+              #'#ffffff',#white 
+              #'#000000',# black
+              '#4363d8', #blue
+              '#42d4f4', #cyan
+              '#a9a9a9', #grey
+              '#469990', #teal
+              '#0e731a',#'#3cb44b', #green
+              '#97bd37',#'#bfef45', #lime
+              '#ffe119', #yellow
+              '#f58231', #orange
+              '#e6194B', #red
+              '#910606',#800000', #maroon
+              ] 
 
 all_colors =  {
     "Low Demand": hex_colors[1],
@@ -36,14 +65,14 @@ all_colors =  {
     "Below 2°C": hex_colors[5],
     "Delayed Transition": hex_colors[6],
     "Fragmented World": hex_colors[7],
-    "Nationally Determined Contributions (NDCs)": hex_colors[8],
+    "Nationally Determined Contributions (NDCs)": hex_colors[9],
     "Current Policies": hex_colors[11],
     "Very Low with Limited Overshoot":hex_colors[0],
     "Very Low after High Overshoot":hex_colors[2],
     "Low":hex_colors[4],
-    "Medium Low":hex_colors[9],
+    "Medium Low":hex_colors[8],
     "Medium":hex_colors[10],
-    "High":hex_colors[13],#[12],
+    "High":hex_colors[12],#[12],
     #"High Overshoot":hex_colors[13],
     }
 
@@ -62,11 +91,15 @@ CMIP7_colors = {k: all_colors[k] for k in CMIP7_scenarios}
 ui_app = ui.page_fluid(
     ui.page_navbar(
         ui.nav_spacer(),
-        ui.nav_control(ui.input_action_button("toggle_temp", "°C", class_="btn-outline-dark"),
-                       #ui.input_dark_mode(id='darklight')
+        ui.nav_control(ui.input_action_button("toggle_temp", "°C"),
+                       ui.input_dark_mode(id='darklight')
                        ),
         title = "Warming Dashboard",
         ),
+    
+    ui.head_content( # sets background panel color based on dark/light mode
+        ui.output_ui("dynamic_style")
+    ),
     
     ui.page_sidebar(
 
@@ -105,12 +138,14 @@ ui_app = ui.page_fluid(
 
     ui.layout_columns(
         ui.value_box("Median Warming", ui.output_ui("median_box"), 
-                     showcase=icon_svg("temperature-half"), fill="grey"),
-                     #showcase="fi fi-rr-temperature-high"),
+                     #showcase=icon_svg("temperature-half")),
+                     showcase = thermometer_icon),
         ui.value_box("Probability of Exceeding 1.5°C", ui.output_ui("prob15_box"), 
-                     showcase=icon_svg("fire")),
+#                     showcase=icon_svg("fire")),
+                     showcase = fire_icon),
         ui.value_box("Probability of Exceeding 2.0°C", ui.output_ui("prob20_box"), 
-                     showcase=icon_svg("dumpster-fire")),
+                     #showcase=icon_svg("dumpster-fire")),
+                     showcase=house_fire_icon),
         fill=False,
     ),
     
@@ -118,22 +153,60 @@ ui_app = ui.page_fluid(
         ui.card("Warming Timeseries", output_widget("timeseries"), full_screen=True),
         ui.card("Warming Possibilities", output_widget("year_warming_dist"), full_screen=True),
     ),
-    # the below code sets the color of the background of the main panel.
-    # need to make this dynamic depending on dark/light mode
-    ui.tags.style("""
-                  :root {
-                      --bslib-sidebar-main-bg: #004757; /*#f8f8f8;*/
-                      }
-                 """
-                 ),
+
     ui.include_css(app_dir / "styles.css"),
     fillable = True,
 )
 )
 
 def server(input, output, session):
-    temp_unit = reactive.Value("°C")
+    @reactive.Effect
+    @reactive.event(input.darklight)
+    def set_background_colors():
+        if input.darklight() == 'dark':
+            pio.templates.default = "plotly_dark" # this doesn't update plots that are already made
+        elif input.darklight() == 'light':
+            pio.templates.default = "plotly_white" # this doesn't update plots that are already made
+        return
 
+    @output
+    @render.ui
+    # use this to set background color, card colors, etc depending on dark/light mode
+    def dynamic_style():
+        if input.darklight() == 'dark':
+            color = '#111111' # color to match plotly_dark background
+        else:
+            color = '#ffffff'
+        # to set card color:
+        return ui.tags.style(f"""
+            .card {{
+                background-color: {color} !important;
+                }}
+            .navbar {{
+                background-color: {color} !important;
+                margin-left: -10px;
+                margin-right: -10px;
+                }}
+            .sidebar {{
+                background-color: {color} !important;
+                margin-bottom: -100px;
+                margin-left: -10px;
+                }}
+            .irs-from, .irs-to, .irs-single, .irs-max, .irs-min {{
+                font-size: 13px !important; 
+            }}
+            """
+        )
+            # to set color of background of main panel:
+            #    :root {{
+            #        --bslib-sidebar-main-bg: {color};
+            #        }}    
+            #.card {{
+            #    color: {color} !important; # this sets the card title text color
+            #    }}
+    
+
+    temp_unit = reactive.Value("°C")
     @reactive.Effect
     @reactive.event(input.toggle_temp)
     def _():
@@ -145,20 +218,8 @@ def server(input, output, session):
             "toggle_temp", 
             label=temp_unit.get(), 
             #class_="btn-primary"
+            #class_="btn-outline-dark"
         )
-    
-    @reactive.Effect
-    @reactive.event(input.darklight)
-    def set_background_colors():
-        if input.darklight() == 'dark':
-            pio.templates.default = "plotly_dark"
-            bg_color = 'grey'
-            card_bg_color = 'black'
-        else:
-            pio.templates.default = "plotly_white"
-            bg_color = 'white'
-            card_bg_color = 'white'
-        return bg_color, card_bg_color
     
     @reactive.calc
     def year_number():
@@ -185,6 +246,7 @@ def server(input, output, session):
         return df1
 #        return df[(df["scenario"].isin(scenario_name())) & (df["year"] == year_number())]
 
+
     def med_warming_text():
         ydf = year_df()
         lines = []
@@ -205,84 +267,85 @@ def server(input, output, session):
             lines.append(line)
         return "".join(lines)
     
+
     def plot_scenarios_plotly(ds):
-       ds = dfquant[dfquant['year'].between(1850,2101)]
-       x = ds.year.unique()
-       
-       def hex_to_rgb(hex_color):
-           hex_color = hex_color.lstrip('#')
-           return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        ds = dfquant[dfquant['year'].between(1850,2101)]
+        x = ds.year.unique()
+        
+        def hex_to_rgb(hex_color):
+            hex_color = hex_color.lstrip('#')
+            return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+ 
+        fig = go.Figure()
 
-       fig = go.Figure()
-
-       for scenario in scenario_name():#ds.scenario.unique():
-           ds1 = ds[ds['scenario']==scenario]
-           ymed = ds1[ds1['CI_level']==0.50]['warming']
-           for pp in ((0.00, 1.00, .2), (0.05, 0.95, .3), (0.16, 0.84, .4)): # lower CI, upper CI, alpha value
-               ylower = ds1[ds1['CI_level']==pp[0]]['warming']
-               yupper = ds1[ds1['CI_level']==pp[1]]['warming']
+        for scenario in scenario_name():#ds.scenario.unique():
+            ds1 = ds[ds['scenario']==scenario]
+            ymed = ds1[ds1['CI_level']==0.50]['warming']
+            for pp in ((0.00, 1.00, .2), (0.05, 0.95, .3), (0.16, 0.84, .4)): # lower CI, upper CI, alpha value
+                ylower = ds1[ds1['CI_level']==pp[0]]['warming']
+                yupper = ds1[ds1['CI_level']==pp[1]]['warming']
+             
+                lab0 = scenario + ' ' + str(int(pp[0]*100)) + '% CI'
+                lab1 = scenario + ' ' + str(int(pp[1]*100)) + '% CI' 
+                rgb_color = hex_to_rgb(all_colors[scenario])
+                rgba_color = f'rgba{rgb_color + (pp[2],)}'
+        
+                fig.add_trace(go.Scatter(
+                    x=x, 
+                    y=ylower,
+                    fill=None,
+                    mode='lines',
+                    line=dict(width=0),
+                    showlegend=False,
+                    name=lab0,
+                    hovertemplate='<b>%{fullData.name}</b><br>year: %{x}<br>warming: %{y:.3f}<extra></extra>',
+                    hoverlabel=dict(bgcolor=all_colors[scenario])
+                    ))
+                fig.add_trace(go.Scatter(
+                    x=x,
+                    y=yupper,
+                    fill='tonexty', # fill area between trace0 and trace1
+                    mode='lines', 
+                    line=dict(width=0),
+                    fillcolor=rgba_color, 
+                    line_color=rgba_color,
+                    showlegend=False,
+                    name=lab1,
+                    hovertemplate='<b>%{fullData.name}</b><br>year: %{x}<br>warming: %{y:.3f}<extra></extra>',
+                    hoverlabel=dict(bgcolor=all_colors[scenario])
+                    ))
             
-               lab0 = scenario + ' ' + str(int(pp[0]*100)) + '% CI'
-               lab1 = scenario + ' ' + str(int(pp[1]*100)) + '% CI' 
-               rgb_color = hex_to_rgb(all_colors[scenario])
-               rgba_color = f'rgba{rgb_color + (pp[2],)}'
-       
-               fig.add_trace(go.Scatter(
-                   x=x, 
-                   y=ylower,
-                   fill=None,
-                   mode='lines',
-                   line=dict(width=0),
-                   showlegend=False,
-                   name=lab0,
-                   hovertemplate='<b>%{fullData.name}</b><br>year: %{x}<br>warming: %{y:.3f}<extra></extra>',
-                   hoverlabel=dict(bgcolor=all_colors[scenario])
-                   ))
-               fig.add_trace(go.Scatter(
-                   x=x,
-                   y=yupper,
-                   fill='tonexty', # fill area between trace0 and trace1
-                   mode='lines', 
-                   line=dict(width=0),
-                   fillcolor=rgba_color, 
-                   line_color=rgba_color,
-                   showlegend=False,
-                   name=lab1,
-                   hovertemplate='<b>%{fullData.name}</b><br>year: %{x}<br>warming: %{y:.3f}<extra></extra>',
-                   hoverlabel=dict(bgcolor=all_colors[scenario])
-                   ))
-           
-           # add median line
-           fig.add_trace(go.Scatter(
-               x=x, 
-               y=ymed, 
-               line_color=all_colors[scenario], 
-               showlegend=False,
-               name=scenario + ' Median',
-               hovertemplate='<b>%{fullData.name}</b><br>year: %{x}<br>warming: %{y:.3f}<extra></extra>',
-           ))
-           
-       # add final touches
-       fig.add_hline(y=0, line_width=.5)
-       hlines = [1.5,2]
-       if temp_unit.get() == '°F':
-           hlines = [h*9/5 for h in hlines]
-       fig.add_hline(y=hlines[0], line_width=.5,
-                     annotation_text='   1.5°C', annotation_position='top left')
-       fig.add_hline(y=hlines[1], line_width=.5,
-                     annotation_text='   2°C', annotation_position='top left')
-       fig.add_vline(x=year_number(), line_dash='dot', line_width=1,
-                     annotation_text=str(year_number())+'  ', 
-                     annotation_position="top left",
-                     annotation_font_size=15,
-                     annotation_textangle=-90)
-       
-       fig.update_traces(mode='lines')
-       fig.update_layout(
-           yaxis_title="warming",
-           yaxis_ticksuffix=temp_unit.get(),
-           width=600,height=500) # this helps control the plot size, but it is still changing a bit when I add scenarios
-       return fig
+            # add median line
+            fig.add_trace(go.Scatter(
+                x=x, 
+                y=ymed, 
+                line_color=all_colors[scenario], 
+                showlegend=False,
+                name=scenario + ' Median',
+                hovertemplate='<b>%{fullData.name}</b><br>year: %{x}<br>warming: %{y:.3f}<extra></extra>',
+            ))
+            
+        # add final touches
+        fig.add_hline(y=0, line_width=.5)
+        hlines = [1.5,2]
+        if temp_unit.get() == '°F':
+            hlines = [h*9/5 for h in hlines]
+        fig.add_hline(y=hlines[0], line_width=.5,
+                      annotation_text='   1.5°C', annotation_position='top left')
+        fig.add_hline(y=hlines[1], line_width=.5,
+                      annotation_text='   2°C', annotation_position='top left')
+        fig.add_vline(x=year_number(), line_dash='dot', line_width=1,
+                      annotation_text=str(year_number())+'  ', 
+                      annotation_position="top left",
+                      annotation_font_size=15,
+                      annotation_textangle=-90)
+        
+        fig.update_traces(mode='lines')
+        fig.update_layout(
+            yaxis_title="warming",
+            yaxis_ticksuffix=temp_unit.get(),
+            width=600,height=500) # this helps control the plot size, but it is still changing a bit when I add scenarios
+        return fig
 
 
     def plot_year_warming_probabilities_plotly():
@@ -420,31 +483,39 @@ def server(input, output, session):
 
     @output
     @render_widget
-    @reactive.event(input.go)
+    @reactive.event(input.go, input.darklight, input.toggle_temp)
     def timeseries():
+        if input.darklight() == 'dark':
+            pio.templates.default = "plotly_dark"
+        elif input.darklight() == 'light':
+            pio.templates.default = "plotly_white"
         return plot_scenarios_plotly(filtered_df())
 
     @output
     @render_widget
-    @reactive.event(input.go)
+    @reactive.event(input.go, input.darklight, input.toggle_temp)
     def year_warming_dist():
+        if input.darklight() == 'dark':
+            pio.templates.default = "plotly_dark"
+        elif input.darklight() == 'light':
+            pio.templates.default = "plotly_white" 
         return plot_year_warming_probabilities_plotly()
 
     @output(id="median_box")
     @render.ui
-    @reactive.event(input.go)
+    @reactive.event(input.go, input.darklight, input.toggle_temp)
     def median_box_ui():
         return ui.HTML(med_warming_text())
 
     @output(id="prob15_box")
     @render.ui
-    @reactive.event(input.go)
+    @reactive.event(input.go, input.darklight)
     def prob15_box_ui():
         return ui.HTML(exceedance_probability_text(1.5))
 
     @output(id="prob20_box")
     @render.ui
-    @reactive.event(input.go)
+    @reactive.event(input.go, input.darklight)
     def prob20_box_ui():
         return ui.HTML(exceedance_probability_text(2.0))
 
