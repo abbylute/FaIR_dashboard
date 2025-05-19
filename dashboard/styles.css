@@ -3,14 +3,16 @@
 .info-btn {
     --bs-btn-padding-x: 0em;
     --bs-btn-padding-y: 0em;
-    background-color: #404040;
-    color: white;
+    background-color: #transparent; /*#404040;*/
+    /*color: white;*/
     font-weight: bold;
     font-size: 13px;
-    font-family: math;
+    font-family: serif;
     border-radius: 50%; 
     width: 17px; 
     height: 17px;
+    vertical-align: 0.5px;
+    text-box: trim-both cap alphabetic;
    /* border: none;*/
 }
 
@@ -19,9 +21,19 @@
     --bs-btn-padding-y: 0em;
     font-weight: bold;
     border-radius: 50%; 
-    width: 30px; 
-    height: 30px;
+    width: 32px; 
+    height: 32px;
+    vertical-align: 2.5px;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: transparent;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-font-size: 1.3rem;
+    --bs-btn-hover-color: #dee2e6;
 }
+
+#year {
+    font-size: 20px;
+    }
 
 /* p {
   font-size: 100%;
