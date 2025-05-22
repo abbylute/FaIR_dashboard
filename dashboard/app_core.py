@@ -7,7 +7,6 @@ Created on Wed May  7 12:54:33 2025
 """
 
 from shiny import App, ui, render, reactive
-from shinywidgets import render_widget, output_widget
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,6 +15,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
 #from faicons import icon_svg
+from shinywidgets import render_widget, output_widget
 
 from shared import app_dir, df, dfmed, dfquant
 
