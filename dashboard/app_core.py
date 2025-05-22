@@ -15,13 +15,17 @@ import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
-from faicons import icon_svg
+#from faicons import icon_svg
 
 from shared import app_dir, df, dfmed, dfquant
 
+# icons from https://icons8.com/. To find icons that aren't white, enter the color as a search term in the search bar. changing the color of white icon does not work.
 thermometer_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB+ElEQVR4nO2YSytFURTHt2cpZI6hEZIvYKKEwkDKVMbKe+gxkPIthAEy4hPwFbwlZS66qUseP+0suV3Xufues8+xz3F+w9N6/Ndae+27u0qlfAM0AbtAhp/ob3tAi3JY/B3F0TaNyjX47Lxmv5BA/Q04EJtt5Rp8H5tfuws0i82Dcg0EW3aRkxbw1yR2AsBRobtUuQZJLSCftICwSOwEiPsOEPcC8kkLCIvEToC47wBxLyCftICwSOwEiPsOULiAQ+UauNpZU/5NAUAf0K9cApgT/VnDP8DegSWgLBqF3oIWRPwLMGZgPy62mrVoVP4upgt4A56AnhL8eoBnmYSxn1WACuBKOjntw39WfG+B6nBUFl9GzQlQ7sO/HDiTGKPhqPQWsCXJpwLEmJEYO3bVmSW/keQdAWJ0Soxru+rMkusl1DQEiNFgev1aB3iU5LUBYtRJjIxddWbJLyR5a4AYbRLjzK46s+SbknwmQIwpibFhV51Z8mFJridR5fN35FhiDIej0ltAZc49Pu/Df0J8L/00wAr6VSnPgVdgsAS/7pynxEC4KouLWZZO6iLmvbopx2Yi5wpeiVZtYVFlwKJ0U3Muv7DtQA1QL7fNJHAqNtp21Ynn9BdAb85OeHFRynGLFH18gCF9LcojLwvcy6KuAyN6+aNVpdzmAw3UhPaDC6NyAAAAAElFTkSuQmCC" alt="temperature">')
+thermometer_icon_black = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAACSklEQVR4nO2aTYsTQRCGa3dVEFSWhDD9vt0yJy9REcndiyAqqAcRvIrnBddVj34cRPBfiHpQ8aS/QP+CukYRwbsoIqi4ulJYQQ0hO5kkk55xHphLqKquz04xiUjNH7z3AcADkp9Irvc9+tlD7/0uidj59wMc/+dRmRCCl9jA78yrg48GOaifAXhsMvckNmhtMyy7JHdaAB8lNmgtMim5wqkDmDWVrQDJp4OuU4kNVjWAfuoApkVlK8CyzwDLHkA/dQDTorIVYNlngGUPoJ86gGlR2Qqw7DPAwQE8kdhgrJnNyn8TgHPuiPf+qMQEyYv2wupLxhdgPwFcFZG5Yjwc7tBly/53kmc2kgdw1mQ14JsyS5xzB0j+APAVwKGseioL4JtVIrPepFkA8Nqyf35UZZIXrArv2u32FikaHUZz/rmIzOcwMU9y1WyclqIheVcP994vj2Fjxapwf7LeZTv8rQWwbwwb+60Cb6RobAjX0zRdzGsjTdPFrNfvxCH5WQ9vtVrb8tpoNpvbe7+fSdEA6OrhSZLszmsjSZI9FsCqFA3JO3b4Sl4b3vtls3FbisY5d9L6t9vpdDbnMLFA8pnaUFsyAzb17nEAl0ZVBrBkuq9yJmB8dKvUdYDkGsnjWfVIHuytEiSPySwBcM36eE0rsUE2df1Y6l3BJK9LBMyRvGLZ1JZ4qYMdQtgbQtjaaDR26G0D4BzJF+a4yt6IYp3u4Zw7/NduM+yvBt1R2q1QtH0AnNBrUZc8/YYF8EEHFcAt7/0pHf5ivZK4+QUFpEqmGgBt1AAAAABJRU5ErkJggg==" alt="temperature">')
 fire_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFBElEQVR4nNWaaahVVRTHj6Zi+bTIrCjTSs0GTZQGqAwLo3oNRuaXhGi2voRhCEEZRSk0ERVEIWqQaRM5vKaXEY32jAxLs4nmLM0Gqle+8vWL1f0f3N3uPXude86z99ane8/9r/9a65yz115r7ZskJQuwC7AWeAkYkfRUAQ5lh/wMTE96ogDnKIgfg4AWAAOSniTAHDl/JTAD+F3fNwLjkp4iwKty/Eh9Hw98pGsW1MVJdxdgMLAd+BroHVzfHXgseNXmAr2S7irALDl6V53frwL+FGYp0D/pbkIl7X4sJydk4JqBX4R7Ddgr6U4CXCjnVjmwRwHfCm/BH5x0BwF2Bb6UYyc5dUYAH0rnM2BY13sad+p2ObQip94QYE3wZPbvOi/jzhynTNUOjGpAf0/gnWCv2adrPI078amcuKIAz77Ba/aupfFyPc023htYKePLSuAbDnwhvlbLguV4Gjc8T0Y3lZVCgdHA9+KdVwZnzOAFMtYBnBjB9gduAU5wcp8OdAJ/AeeW5nQNQ8cD2xTIJQ78ycJu8zoG3BS0AYeV4niVgQOBzTJyp1PniKDGsux2qXP9tUpndVi3FRZgYJAmn/YuRqCJf4u9Mpc595jN0plRVhB2h5aLdINVszn1t0rX2l+TP4BTcpQ9PwB7FwqiKkNtbaQPB96SvvUmq4IO8vCIXq+gv3mwaBDNeh3sLk5qkOMpOTNRr9q64On2i+iOU+lvPowtsuNukdFZDZFUeFrEMUXfRwY9/bUO/YXCLmnUgSXB4m64owueyNnBtWm6ZjXaQY6ngp5MvsLSFuM/qpUm6IBGgxCX3QiTM6quP6frDzs4XhR2Tl7jb0rxmgZ8r+ZKF+ykGjOw7brTmf1IMGbakHeBm3wV66ttXqWgnwX61sGk+8GwjKeVuVbUvKWjpUO8gayQwkwH9h52yH8KPTOq37bUWmfAVP2+xmHreWEv9450OpRuBzt677TAa6+1awM3yvjiOhxNerXM3m4Re7PFtdATyHSBWxzY9LVYBJwmZyyYO3RDjg4mJhMzeKyZMqk7fRFusnCrPYHcLfDsCG6UcOb8UF07X0+zWhY495kznQXoJk8gr9fKMBkz3qVV1ycAT2qBf2CLOFZgAo+Ia6qjtTZp9wSS9uDDI7i0zJ4WJY3bXCausyK4fsJ1eEh/EnhQBPe5cIUPc3QwZDLeUTKZfOMhTWezfSK4tLcuuuun+4NtjAMj2DGyud5DnBZzmT1HML4Z04D/Ic+p4mlzYNPdvdVDvNHjoKbphapi8Twknusd2FuFvdlD/LjAmWd/wHnBqDNzI8vgGKrXqtMz+6UyvY+m6RQ8U+BFjmOEdG57f84YUo4HvH0GlcFHp6Yxe3jIR2p3tuzV5NigfkuDyXNwo5lxp5LLaAf+Btl51GvDlF6Q0tUO7OQgmLWxbBforZfOXAd2gCaaJs2NNFU2bBjiwI8F3tY5R2YPHujYvKrN8xSB6+TPutwzrqD+WZljhlXeIE1ibbAmjvmeRkCwH/CdCOb/H6ewQF/gDfnwTBGiY4O7cV+9DrArhMpMa35akhQ+ALIzwaDFbNsZB5dUgrhXNju855Ie4mOAT0T8K3BbVx2RUWnIWoJeZ0rZBuzfC4u1x6CU+wRwkfaTQQX5+1ibrH9NoH0ss6wvJGqclgcBhfJKAd60SjCxzzvn7N1qI/0DyNLze0oKLxfgs33lfbXLudP43zjrlXuJCC9sAAAAAElFTkSuQmCC" alt="fire-element--v1">')
+fire_icon_black = ui.HTML('<img src="data:image/png;base64,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" alt="fire-element--v1">')
 house_fire_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAADs0lEQVR4nO2aW8hOWRjHt3E+zESNQ84zIlGUQw43SHGDcmiM1EeiZFLU1JALbnDhkLhgrpS4kFOZGSlR3GkozPA5xWgS4+xzmoSfnvHfLGv23u9+D3u/r3z/Wn3vfvaznrV+e532WvsLggzFO90GDgDDg09RQGs+1htgVfCpCeghgLPAYQdoZVALAnqm9Jukim/S9VzglVpmUuYVLSRV7i9gHdArwW+LfL9zbD/KdgNoE1RLQFuv3zcAdRF+XwL3gWeWx7F/AfyuvEu8PMOBn4AWeYD0ViUuACf1+zUw0/Oz1jJtjogxXvfqPXtn2f8EBmQNMkOFrdfTXaPrB0BH+UzTOHgIdImI0QS4qHz9HXsL5TPdA4ZkCbJTBU1xbIdkWwpMBp7oenZCnNXy+cGxLZfNJgT0IAZmAdEHeAk8dgeqWsB0S93MtLpArIny+xlobuuLWuO1HsZ+pwu3qjRI+OQ3ePb2zuC3p7kiRaxezux3zcm7yFlMT8u+vJIQsxTUZqKvI+6Hg3RkibNfPTAuYhYLx1/LSkB0AP5R0LkxPnVAsyLjmq4CC+PyAkflN73U+gcRg/B42cE+jjvGZrACPotV9pZKFBiuF1PLDlZ82WNV9rFSA9S0gs8WJKgx0QhSY6KxRXIU8FXSi6Z8qjfYgU6WUvruBbbH7R6rBiKIP5QKwgATVPS5qG10VUAciFAFYXi3WbvpbAuGVhXEgwhbJC3MLgf+DtCvKiAREP+NkTgY/80ZWOIt5PaG3C5XkAIVjryn6/PAKF1PdfYoNlZMW3MDSYJI8OnuPPkX2gKHb7zXbc+uIyXbBg/OHCQNRIyvdRtXd4H5+n1Z/nZiY9pdMkgJSjvN+jPaIefg7pH+npBvV+Bft5CsQVJBOGV0BK4o7zIdej904r0/3AMOlgQSBVVS5uS4zbVWmAZFzFhjHd/Qvr2cArMCCWencx7cZeCSu58HRsj3VC2C7PFPG511pS7mHOx2UCmQpEFSZFw7nDN969mbWvJsbeT7ohZBbN0gzeEbHz7jPa84SJKPbN3VfRqU9gF9nftPla1tijp8I9+/cwURhB2v+jJbN/mc8WenOAHfy/e3IGeQcCD/YhVX+lW23d6nhX0p6nBEvovzBrGuRPj0va+8j5wVO+xeCxPKX+AcZnfIG+R/PjF+c/RCaGkHMFon9ZaGAducby6RB+hlg0SpWBDZ5jktE6uyIPIAcbrdWv1zQYPA7HvLxsxAyslTyVhFqxGExhbJtmtVW8HnAvIWDK0FVYK0rvkAAAAASUVORK5CYII=" alt="burning-house">')
+house_fire_icon_black = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEVUlEQVR4nO2aW4gcRRSG23iNN3TXma7/PzM7XlaRFQw4Bo0vRgR9USEqXhBiEAVRAhGEGHwwL9GHqIh5MHkKiD6IRsFLEERB30QFL0lWoxhFxHjZbLIalZC4cpJToSh6Zntnu3smZA8UTJ8+dfnqcqrq9CRJiUJymuRukm845xYnx6I0Go2FBuLTfwDWJseakGwqAIAvSL4bAD2RDIIAGMljR/Ima/hz9ryC5EEdGX1XekNnEmvcDwDWO+daXew2mO0dge5R0/0I4PSkX5Km6RnRvJ8SkeWx3fDw8FkAJkju1zzBqwUkP7EptyrMo84AwOqxsbFTqgA53wB2APjYfh8ieWdop6Nl756PyyB5vb0bD/X1ej01/Tbn3FipICJyu/Xm09a7T9rzHudcTW2cc7eah5qs1Wouo5gTAHxt+S71Sh0JHlk/qv8DwBWlgZB8yXrtlkC3VXUi8gjJm0n+aY25p0s566ych70OwBrTHbT8k2maXlY4RLPZvAjAAZL7woVqI6AN+MWmmf5e160sADea3aZ2u32y7i82GoesM173U7jVap1WKIjveQDPhPpWq3VOsPi1Nx+fqSz1dt77kfw+yPtQsJl+ZvWtKQwCwN1W6ASA8zIgDy9SEbm6R+83LiLXRbCL/fobHR09dc4QIyMj55L81SpckWVjLvik2ZRrjfyO5IOd8gJ4X+2cc7f12v4kYxF+mBQozrlr1YPNUPdKq3vDnCv0+wWAZUnFIiJLre4Peiogmr8Dl5LjFiQZMOE8yIAJ50ekQhkaGjq720Gz7yOSpmldU856XwOwudPtsW8gCkDyK015YADcYBvgl1nX6L6ABBDe/+eBWQDgZ38tANDuK0gEcXhE8sKQfDmA/43kJX0BiSH8GukEE5+cAawKd3E9IddqtTMrBenW4E7v7Hk7ySUGssx047pWDOaFykC6QXSyEZFG0PP/6BXYn3hJ7tI7u4aU9BosIotKB8kDkWVrF6vwQPg7gPvt3U6114iNPb9S5ek3l5vN8Ghbg8DdXtN9pLbNZpMA/p3T6bcMCC8aBwPwrTX+MQ16A5gMyjsa3APwZk8gWVBJwaJhIAshaUzs8thjichSb+v1uuv3XGFZIN47qWfyuvaRGNdOAN+E93kRucra8ekggrwaRxv9vhIHxoM42O6kKJBu62SW5Wpwbrper18YvTrR0lHRQ6R30QMHoo3SPHmCbw37jAfg78JButmo6GZn02fK0hYRuTjI85fmib6fZEqaphcYyE9JlSAGMRGPmOoajYaoDYDPY+/USUjeZfnfSaoE8QsZwFvacE0A3vY7dPRpYctMbQDwnuVdWSmITaVp3/vRV969fsf208viv50gHrB8ezQOXTVI5uLPsLvXvotoepHkNbpmNDnnrgSwMfjmkhlAL9Vr5QUx3X3ByEwX4RH7AmJ6nWdP2Z8LpgxsG4BnSwOZS54iy5q1zINwfkTKnVr9TsnxAvI/4hd4Kq4ifq0AAAAASUVORK5CYII=" alt="burning-house">')
 
 # pretty palette, but hard to distinguish some colors
 #hex_colors = ['#001219', '#004757', '#047380', '#159899', '#74c3b4', '#bbd5b2',
@@ -137,15 +141,10 @@ ui_app = ui.page_fluid(
         ),
 
     ui.layout_columns(
-        ui.value_box("Median Warming", ui.output_ui("median_box"), 
-                     #showcase=icon_svg("temperature-half")),
-                     showcase = thermometer_icon),
-        ui.value_box("Probability of Exceeding 1.5°C", ui.output_ui("prob15_box"), 
-#                     showcase=icon_svg("fire")),
-                     showcase = fire_icon),
-        ui.value_box("Probability of Exceeding 2.0°C", ui.output_ui("prob20_box"), 
-                     #showcase=icon_svg("dumpster-fire")),
-                     showcase=house_fire_icon),
+        ui.output_ui(id='median_value_box'),
+        ui.output_ui(id='prob15_value_box'),
+        ui.output_ui(id='prob20_value_box'),
+
         fill=False,
     ),
     
@@ -160,6 +159,43 @@ ui_app = ui.page_fluid(
 )
 
 def server(input, output, session):
+    
+    # update icon colors
+    @reactive.event(input.darklight)
+    def therm_icon():
+        if input.darklight() == 'dark':
+            return thermometer_icon, fire_icon, house_fire_icon
+        else:
+            return thermometer_icon_black, fire_icon_black, house_fire_icon_black
+        
+    # update value boxes    
+    @output()
+    @render.ui
+    @reactive.event(input.darklight)
+    def median_value_box():
+        return ui.value_box(
+            'Median Warming',
+            ui.output_ui('median_box'),
+            showcase=therm_icon()[0])
+
+    @output()
+    @render.ui
+    @reactive.event(input.darklight)
+    def prob15_value_box():
+        return ui.value_box(
+            "Probability of Exceeding 1.5°C",
+            ui.output_ui('prob15_box'),
+            showcase=therm_icon()[1])
+
+    @output()
+    @render.ui
+    @reactive.event(input.darklight)
+    def prob20_value_box():
+        return ui.value_box(
+            "Probability of Exceeding 2.0°C",
+            ui.output_ui('prob20_box'),
+            showcase=therm_icon()[2])    
+        
     @reactive.Effect
     @reactive.event(input.darklight)
     def set_background_colors():
@@ -461,6 +497,10 @@ def server(input, output, session):
     @output
     @render.plot
     def ngfs_info_plot():
+        if input.darklight() == 'dark':
+            plt.style.use('dark_background')
+        else:
+            plt.style.use('default')
         fig, ax = plt.subplots(figsize=(9,6))
         sns.lineplot(data=dfmed[dfmed['scenario'].isin(NGFS_scenarios)], x="year", y="median_warming", hue="scenario", palette=NGFS_colors)
         ax.set_title("Median Warming by Scenario")
@@ -472,6 +512,10 @@ def server(input, output, session):
     @output
     @render.plot
     def cmip7_info_plot():
+        if input.darklight() == 'dark':
+            plt.style.use('dark_background')
+        else:
+            plt.style.use('default')
         fig, ax = plt.subplots(figsize=(9,6))
         sns.lineplot(data=dfmed[dfmed['scenario'].isin(CMIP7_scenarios)], x="year", y="median_warming", hue="scenario", palette=CMIP7_colors)
         ax.set_title("Median Warming by Scenario")
