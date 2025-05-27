@@ -266,13 +266,6 @@ def server(input, output, session):
         #return list(input.scenario())
         return list(input.scenario()) + list(input.scenario_cmip7())
 
-    @reactive.calc
-    def filtered_df():
-        df1 = df[df["scenario"].isin(scenario_name())]
-        if temp_unit.get() == "°F":
-            df1['warming'] = df1['warming'] * 9/5
-        return df1
-        #return df[df["scenario"].isin(scenario_name())]
 
     @reactive.calc
     def year_df():
@@ -284,11 +277,10 @@ def server(input, output, session):
 
 
     def med_warming_text():
-        ydf = year_df()
         lines = []
         for sname in scenario_name():
-            filt_df = ydf[ydf["scenario"] == sname]
-            swarm = f"{filt_df['warming'].median():.2f} {temp_unit.get()}"
+            filt_df = dfmed[(dfmed["scenario"] == sname) & (dfmed["year"]==year_number())]
+            swarm = f"{filt_df['median_warming'].values[0]:.2f} {temp_unit.get()}"
             color = all_colors[sname]
             line = f'<div style="color: {color}; font-weight: bold; margin: 0; line-height: 1.2;">{swarm}</div>'
             lines.append(line)
@@ -304,7 +296,7 @@ def server(input, output, session):
         return "".join(lines)
     
 
-    def plot_scenarios_plotly(ds):
+    def plot_scenarios_plotly():
         ds = dfquant[dfquant['year'].between(1850,2101)]
         x = ds.year.unique()
         
@@ -314,7 +306,7 @@ def server(input, output, session):
  
         fig = go.Figure()
 
-        for scenario in scenario_name():#ds.scenario.unique():
+        for scenario in scenario_name():
             ds1 = ds[ds['scenario']==scenario]
             ymed = ds1[ds1['CI_level']==0.50]['warming']
             for pp in ((0.00, 1.00, .2), (0.05, 0.95, .3), (0.16, 0.84, .4)): # lower CI, upper CI, alpha value
@@ -533,7 +525,7 @@ def server(input, output, session):
             pio.templates.default = "plotly_dark"
         elif input.darklight() == 'light':
             pio.templates.default = "plotly_white"
-        return plot_scenarios_plotly(filtered_df())
+        return plot_scenarios_plotly()
 
     @output
     @render_widget
