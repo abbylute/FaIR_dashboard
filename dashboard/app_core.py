@@ -10,14 +10,23 @@ from shiny import App, ui, render, reactive
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
-#import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
 #from faicons import icon_svg
 from shinywidgets import render_widget, output_widget
 
-from shared import app_dir, df, dfmed, dfquant
+#from shared import app_dir, df, dfmed, dfquant
+from pathlib import Path
+import pandas as pd
+
+# load data files
+app_dir = Path(__file__).parent
+app_dir1 = Path(__file__).parent.parent
+df = pd.read_csv(app_dir1 / "data/fair_warming.csv")
+dfmed = pd.read_csv(app_dir1 / "data/fair_warming_scenario_medians_exceedances.csv")
+dfquant = pd.read_csv(app_dir1 / "data/fair_warming_scenario_quantiles.csv")
+
 
 # icons from https://icons8.com/. To find icons that aren't white, enter the color as a search term in the search bar. changing the color of white icon does not work.
 thermometer_icon = ui.HTML('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB+ElEQVR4nO2YSytFURTHt2cpZI6hEZIvYKKEwkDKVMbKe+gxkPIthAEy4hPwFbwlZS66qUseP+0suV3Xufues8+xz3F+w9N6/Ndae+27u0qlfAM0AbtAhp/ob3tAi3JY/B3F0TaNyjX47Lxmv5BA/Q04EJtt5Rp8H5tfuws0i82Dcg0EW3aRkxbw1yR2AsBRobtUuQZJLSCftICwSOwEiPsOEPcC8kkLCIvEToC47wBxLyCftICwSOwEiPsOULiAQ+UauNpZU/5NAUAf0K9cApgT/VnDP8DegSWgLBqF3oIWRPwLMGZgPy62mrVoVP4upgt4A56AnhL8eoBnmYSxn1WACuBKOjntw39WfG+B6nBUFl9GzQlQ7sO/HDiTGKPhqPQWsCXJpwLEmJEYO3bVmSW/keQdAWJ0Soxru+rMkusl1DQEiNFgev1aB3iU5LUBYtRJjIxddWbJLyR5a4AYbRLjzK46s+SbknwmQIwpibFhV51Z8mFJridR5fN35FhiDIej0ltAZc49Pu/Df0J8L/00wAr6VSnPgVdgsAS/7pynxEC4KouLWZZO6iLmvbopx2Yi5wpeiVZtYVFlwKJ0U3Muv7DtQA1QL7fNJHAqNtp21Ynn9BdAb85OeHFRynGLFH18gCF9LcojLwvcy6KuAyN6+aNVpdzmAw3UhPaDC6NyAAAAAElFTkSuQmCC" alt="temperature">')
