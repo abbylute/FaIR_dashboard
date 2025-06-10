@@ -105,8 +105,12 @@ ui_app = ui.page_fluid(
     ui.page_navbar(
         ui.nav_spacer(),
         ui.nav_control(ui.input_action_button("toggle_temp", "°C"),
-                       ui.input_dark_mode(id='darklight')
+                       ui.input_dark_mode(id='darklight'),
                        ),
+        ui.nav_spacer(), 
+        ui.nav_control(ui.tags.a(ui.output_ui(id='logo'),
+                                 href='https://www.woodwellclimate.org/',
+                                 target="_blank")),
         title = "Warming Dashboard",
         ),
     
@@ -158,7 +162,7 @@ ui_app = ui.page_fluid(
     ),
     
     ui.layout_columns(
-        ui.card("Warming Timeseries", output_widget("timeseries"), full_screen=True),
+        ui.card("Warming Time Series", output_widget("timeseries"), full_screen=True),
         ui.card("Warming Possibilities", output_widget("year_warming_dist"), full_screen=True),
     ),
 
@@ -204,7 +208,15 @@ def server(input, output, session):
             "Probability of Exceeding 2.0°C",
             ui.output_ui('prob20_box'),
             showcase=therm_icon()[2])    
-        
+    
+    # update logo based on dark/light    
+    def set_logo():
+        if input.darklight() == 'dark':
+            logo_source = "Horizontal-White Lettering - Woodwell logo.png"
+        elif input.darklight() == 'light':
+            logo_source = "Horizontal - Woodwell logo.png"
+        return logo_source
+    
     @reactive.Effect
     @reactive.event(input.darklight)
     def set_background_colors():
@@ -563,6 +575,14 @@ def server(input, output, session):
     @reactive.event(input.go, input.darklight)
     def prob20_box_ui():
         return ui.HTML(exceedance_probability_text(2.0))
+    
+   
+    @output(id="logo")
+    @render.ui
+    @reactive.event(input.go, input.darklight)
+    def logo_img():
+        return ui.img(src = set_logo(), style="max-width:220px;width:100%")
 
 
-app = App(ui=ui_app, server=server)
+static_dir = Path(__file__).parent / "static"
+app = App(ui=ui_app, server=server, static_assets=static_dir)
