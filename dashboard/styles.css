@@ -16,6 +16,22 @@
    /* border: none;*/
 }
 
+.title-info-btn {
+    --bs-btn-padding-x: 0em;
+    --bs-btn-padding-y: 0em;
+    background-color: #transparent; /*#404040;*/
+    /*color: white;*/
+    font-weight: bold;
+    font-size: 13px;
+    font-family: serif;
+    border-radius: 50%; 
+    width: 17px; 
+    height: 17px;
+    vertical-align: -15px;
+    text-box: trim-both cap alphabetic;
+   /* border: none;*/
+}
+
 #toggle_temp {
     --bs-btn-padding-x: 0em;
     --bs-btn-padding-y: .3em;

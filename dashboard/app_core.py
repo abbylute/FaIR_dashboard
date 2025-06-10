@@ -103,6 +103,7 @@ CMIP7_colors = {k: all_colors[k] for k in CMIP7_scenarios}
 
 ui_app = ui.page_fluid(
     ui.page_navbar(
+        ui.nav_control(ui.input_action_button(id="info_btn_title", label="i", class_="title-info-btn")),
         ui.nav_spacer(),
         ui.nav_control(ui.input_action_button("toggle_temp", "°C"),
                        ui.input_dark_mode(id='darklight'),
@@ -127,7 +128,7 @@ ui_app = ui.page_fluid(
             "scenario", 
             ui.tags.div(
                 ui.tags.span("NGFS Scenarios"),
-                ui.input_action_button("info_btn_ngfs", "i", class_="info-btn"),#, icon=icon_svg("circle-info")),
+                ui.input_action_button("info_btn_ngfs", "i", class_="info-btn"),
             ),
             {
                 name: ui.span(name, style=f"color: {color}; font-weight: bold;")
@@ -140,7 +141,7 @@ ui_app = ui.page_fluid(
             "scenario_cmip7", 
             ui.tags.div(
                 ui.tags.span("Preliminary CMIP7 Scenarios"),
-                ui.input_action_button("info_btn_cmip7", "i", class_="info-btn"),#, icon=icon_svg("circle-info")),
+                ui.input_action_button("info_btn_cmip7", "i", class_="info-btn"),
             ),
             {
                 name: ui.span(name, style=f"color: {color}; font-weight: bold;")
@@ -499,9 +500,24 @@ def server(input, output, session):
                 ui.tags.p("Medium emissions scenario consistent with current policies.", style="margin-left: 25px;font-weight: normal;"),
                 ui.tags.p("High", style="font-weight: bold; margin-bottom: 0;margin-left: 25px;"),
                 ui.tags.p("High emission scenario to explore potential high-end impacts.", style="margin-left: 25px;font-weight: normal;"),
-                # TODO: add plot of median trajectories
                 ui.output_plot("cmip7_info_plot",width='1000px',height='600px'),
                 size='xl',
+                easy_close=True,
+                footer=ui.modal_button("Close"),
+            )
+        )
+
+    @reactive.effect
+    @reactive.event(input.info_btn_title)
+    def show_modal_title():
+        ui.modal_show(
+            ui.modal(
+                ui.HTML("<b>About<b/>"),
+                ui.tags.p("The Warming Dashboard is based on simulations using the reduced complexity climate model ", 
+                          ui.tags.a("FaIR", href='https://gmd.copernicus.org/articles/14/3007/2021/', target='_blank'), 
+                          ". More details about the modeling approach and input data can be found in the ",
+                          ui.tags.a("technical documentation", href="Warming Dashboard Technical Documentation.pdf", target='_blank'),".", style="font-weight: normal;"),
+                ui.tags.p("Questions and comments can be directed to Dr. Abby Lute at alute@woodwellclimate.org.", style="font-weight: normal;"),
                 easy_close=True,
                 footer=ui.modal_button("Close"),
             )
