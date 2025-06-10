@@ -18,7 +18,7 @@
 
 #toggle_temp {
     --bs-btn-padding-x: 0em;
-    --bs-btn-padding-y: 0em;
+    --bs-btn-padding-y: .3em;
     font-weight: bold;
     border-radius: 50%; 
     width: 32px; 
